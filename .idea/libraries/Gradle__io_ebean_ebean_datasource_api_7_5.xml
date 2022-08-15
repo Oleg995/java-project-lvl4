@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: io.ebean:ebean-datasource-api:7.5">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../.gradle/caches/modules-2/files-2.1/io.ebean/ebean-datasource-api/7.5/a124271160f5dfcf158f33708ead28c77d34cee7/ebean-datasource-api-7.5.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../.gradle/caches/modules-2/files-2.1/io.ebean/ebean-datasource-api/7.5/3df72b212cf0be861e95135757de2e3c849911cc/ebean-datasource-api-7.5-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
