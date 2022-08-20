@@ -3,6 +3,8 @@
  */
 package hexlet.code;
 
+import hexlet.code.controllers.Controller;
+import hexlet.code.controllers.RootController;
 import io.javalin.Javalin;
 import io.javalin.plugin.rendering.template.JavalinThymeleaf;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
@@ -12,6 +14,7 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 public class App {
 
+
     private static int getPort() {
         String port = System.getenv().getOrDefault("PORT", "8000");
         return Integer.valueOf(port);
@@ -20,7 +23,10 @@ public class App {
     private static void addRoutes(Javalin app) {
         // Для GET-запроса на маршрут / будет выполняться
         // обработчик welcome в контроллере RootController
-        app.get("/", ctx -> ctx.result("Hello World!"));
+        app.get("/", RootController.welcome);
+        app.post("/urls", Controller.addToBase);
+        app.get("/urls", Controller.listUrls);
+        app.get("/urls/{id}", Controller.showUrl);
         // При помощи методов routes() и path() маршруты можно группировать
         // BEGIN
         // END
