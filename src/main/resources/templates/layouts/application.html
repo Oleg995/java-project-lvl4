@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.w3.org/1999/xhtml">
-
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+</head>
 
 
 <body class="d-flex flex-column min-vh-100">
@@ -20,14 +22,17 @@
 </nav>
 
 <main class="flex-grow-1">
-    <div
-            th:if="${session.flash}"
-            th:class="'rounded-0 m-0 alert alert-dismissible fade show alert-' + ${ctx.consumeSessionAttribute('flash-type')}"
-            role="alert"
-    >
-        <p class="m-0" th:text="${ctx.consumeSessionAttribute('flash')}"></p>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
+
+
+    <div class="alert alert-success" role="alert" th:if="${session.flashSuccess}">
+        <p class="m-0" th:text="${ctx.consumeSessionAttribute('flashSuccess')}"></p>
+        </div>
+        <div class="alert alert-warning" role="alert" th:if="${session.flashWarning}">
+            <p class="m-0" th:text="${ctx.consumeSessionAttribute('flashWarning')}"></p>
+            </div>
+        <div class="alert alert-danger" role="alert" th:if="${session.flashError}">
+            <p class="m-0" th:text="${ctx.consumeSessionAttribute('flashError')}"></p>
+        </div>
     <div class="container mt-4">
         <h1 class="my-4">
             <section layout:fragment="header"></section>

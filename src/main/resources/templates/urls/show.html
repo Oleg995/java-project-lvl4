@@ -10,22 +10,19 @@
 </head>
 
 <section layout:fragment="content">
-    <div class="card" th:object="${url}">
-        <ul class="list-group list-group-flush">
-    <table class="table">
-        <thead>
+    <table class="table" th:object="${url}">
         <tr>
             <th scope="col">ID</th>
             <th scope="col">Имя</th>
             <th scope="col">Дата создания</th>
         </tr>
-        </thead>
-        <tbody>
-        <tr>
+
             <td th:text="*{id}"></td>
             <td th:text="*{getName}"></td>
             <td th:text="*{getCreatedAt}"></td>
-        </tr>
-        </tbody>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+                crossorigin="anonymous"></script>
     </table>
 </section>

@@ -16,15 +16,15 @@ public final class Controller {
             Url url = new Url(ParserUrl.url(input));
             boolean existUrl = new QUrl().name.equalTo(url.getName()).exists();
             if (existUrl) {
-                ctx.sessionAttribute("flash", "страница уже создана");
+                ctx.sessionAttribute("flashWarning", "страница уже создана");
                 ctx.redirect("/urls");
             } else {
                 url.save();
-                ctx.sessionAttribute("flash", "страница успешно добавлена");
+                ctx.sessionAttribute("flashSuccess", "страница успешно добавлена");
                 ctx.redirect("/urls");
             }
         } catch (MalformedURLException e) {
-            ctx.sessionAttribute("flash", "некорректный url");
+            ctx.sessionAttribute("flashError", "некорректный url");
             ctx.redirect("/");
         }
     };
