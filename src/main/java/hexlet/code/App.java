@@ -27,9 +27,6 @@ public class App {
         app.post("/urls", Controller.addToBase);
         app.get("/urls", Controller.listUrls);
         app.get("/urls/{id}", Controller.showUrl);
-        // При помощи методов routes() и path() маршруты можно группировать
-        // BEGIN
-        // END
     }
 
     private static TemplateEngine getTemplateEngine() {

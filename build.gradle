@@ -61,9 +61,10 @@ testlogger {
 }
 
 jacocoTestReport {
-    reports {
-        xml.required = true
-    }
+        reports {
+            xml.required = true
+        }
+        dependsOn test
 }
 
 checkstyle {

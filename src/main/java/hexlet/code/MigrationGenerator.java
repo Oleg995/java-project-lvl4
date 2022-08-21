@@ -16,7 +16,7 @@ public final class MigrationGenerator {
         if (Objects.equals(env, "production")) {
             dbMigration.addPlatform(Platform.POSTGRES, "postgres");
         } else  {
-            dbMigration.addPlatform(Platform.POSTGRES, "postgres");
+            dbMigration.addPlatform(Platform.H2, "h2");
         }
         // Генерируем миграцию
         dbMigration.generateMigration();
