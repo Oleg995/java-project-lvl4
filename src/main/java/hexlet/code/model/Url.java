@@ -19,15 +19,15 @@ public class Url extends Model {
         this.name = name;
     }
 
-    public long getId() {
+    public final long getId() {
         return this.id;
     }
 
-    public String getName() {
+    public final String getName() {
         return this.name;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public final LocalDateTime getCreatedAt() {
         return this.createdAt;
     }
 }
