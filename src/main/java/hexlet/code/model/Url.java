@@ -39,6 +39,10 @@ public class Url extends Model {
         return this.urlChecks;
     }
 
+    public final void addCheck(UrlCheck check) {
+        urlChecks.add(check);
+    }
+
 
     public final LocalDateTime getLastCheck() {
         if (!urlChecks.isEmpty()) {

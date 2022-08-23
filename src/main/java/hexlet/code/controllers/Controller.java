@@ -18,7 +18,7 @@ public final class Controller {
     public static Handler addToBase = ctx -> {
         String input = ctx.formParam("input");
         try {
-            Url url = new Url(ParserUrl.url(input));
+            Url url = new Url(ParserUrl.parser(input));
             boolean existUrl = new QUrl().name.equalTo(url.getName()).exists();
             if (existUrl) {
                 ctx.sessionAttribute("flashWarning", "страница уже создана");
@@ -91,6 +91,7 @@ public final class Controller {
         }
 //            UrlCheck check = new UrlCheck(response.getStatus(), title, h1, description, url);
         check.save();
+        url.addCheck(check);
         ctx.sessionAttribute("flash", "проверка создана");
         ctx.redirect("/urls/" + id);
     };

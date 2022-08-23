@@ -2,7 +2,10 @@
 package hexlet.code;
 
 import hexlet.code.model.Url;
+import hexlet.code.model.UrlCheck;
 import hexlet.code.model.query.QUrl;
+import hexlet.code.model.query.QUrlCheck;
+import hexlet.code.parser.ParserUrl;
 import io.ebean.DB;
 import io.ebean.Transaction;
 import io.javalin.Javalin;
@@ -15,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -46,6 +50,16 @@ public final class AppTest {
     @AfterEach
     void afterEach() {
         transaction.rollback();
+    }
+
+    @Test
+    void parserTest() throws MalformedURLException {
+        String example = "https://codeclimate.com/velocity/signup/";
+        String actual = "https://codeclimate.com";
+        String exampleWithPort = "https://some-domain.org:8080/example/path";
+        String actual2 = "https://some-domain.org:8080";
+        assertThat(actual).isEqualTo(ParserUrl.parser(example));
+        assertThat(actual2).isEqualTo(ParserUrl.parser(exampleWithPort));
     }
 
     @Test
@@ -108,5 +122,26 @@ public final class AppTest {
         assertThat(actualUrl.getLastCheck()).isNotNull();
         assertThat(actualUrl.getLastStatusCode()).isEqualTo(200);
 
+    }
+
+    @Test
+    void lastTest() {
+        String name = "https://htmled.it";
+        HttpResponse<String> httpResponse = Unirest
+                .post(baseUrl + "/urls/1/checks")
+                .field("name", name)
+                .asEmpty();
+        Url url = new QUrl()
+                .name.equalTo(name)
+                .findOne();
+        assertThat(httpResponse.getStatus()).isEqualTo(302);
+        assertThat(url).isNotNull();
+        assertThat(url.getName()).contains("https://htmled.it");
+
+        UrlCheck check = new QUrlCheck()
+                .id.equalTo(1)
+                .findOne();
+        assert check != null;
+        assertThat(check.getH1()).contains("Free Online HTML");
     }
 }
