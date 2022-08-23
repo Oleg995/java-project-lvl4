@@ -58,8 +58,8 @@ public final class AppTest {
         String actual = "https://codeclimate.com";
         String exampleWithPort = "https://some-domain.org:8080/example/path";
         String actual2 = "https://some-domain.org:8080";
-        assertThat(actual).isEqualTo(ParserUrl.parser(example));
-        assertThat(actual2).isEqualTo(ParserUrl.parser(exampleWithPort));
+        assertThat(actual).isEqualTo(ParserUrl.parse(example));
+        assertThat(actual2).isEqualTo(ParserUrl.parse(exampleWithPort));
     }
 
     @Test
@@ -125,7 +125,7 @@ public final class AppTest {
     }
 
     @Test
-    void lastTest() {
+    void urlCheckTest() {
         String name = "https://htmled.it";
         HttpResponse<String> httpResponse = Unirest
                 .post(baseUrl + "/urls/1/checks")
@@ -139,7 +139,7 @@ public final class AppTest {
         assertThat(url.getName()).contains("https://htmled.it");
 
         UrlCheck check = new QUrlCheck()
-                .id.equalTo(1)
+                .id.equalTo(url.getId())
                 .findOne();
         assert check != null;
         assertThat(check.getH1()).contains("Free Online HTML");
