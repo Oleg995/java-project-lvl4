@@ -120,3 +120,6 @@ create table url (
   created_at                    timestamp not null,
   constraint pk_url primary key (id)
 ) [42101-210]
+2022-08-22 22:48:14 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "URL_CHECK" not found; SQL statement:
+alter table url_check drop constraint if exists fk_url_check_url_id [42102-210]

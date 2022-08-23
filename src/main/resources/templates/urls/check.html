@@ -17,21 +17,15 @@
             <th scope="col">Дата создания</th>
         </tr>
 
-            <td th:text="*{id}"></td>
-            <td th:text="*{getName}"></td>
-            <td th:text="*{getCreatedAt}"></td>
+        <td th:text="*{id}"></td>
+        <td th:text="*{getName}"></td>
+        <td th:text="*{getCreatedAt}"></td>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
                 integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
                 crossorigin="anonymous"></script>
     </table>
-    <form method="post" th:object="${url}" th:action="@{/urls/{id}/checks(id=*{id})}">
-        <div class="d-grid gap-2 col-6 mx-auto">
-            <button type="submit" class="btn btn-dark">Запустить проверку</button>
-        </div>
-    </form>
-    </table>
-    <table class="table table-secondary table-striped">
+    <table class="table table-dark table-striped">
         <thead>
         <tr>
             <th class="col-1">ID</th>
@@ -42,19 +36,15 @@
             <th class="col-2">Дата проверки</th>
         </tr>
         </thead>
-        <tbody>
-        <tr th:each="check : ${url.getUrlChecks()}" th:object="${check}">
-            <td th:text="${check.getId()}"></td>
-            <td th:text="${check.getStatusCode()}"></td>
-            <td th:text="${check.getTitle()}"></td>
-            <td th:text="${check.getH1()}"></td>
-            <td th:text="${check.getDescription()}"></td>
-            <td th:text="${check.getCreatedAt()}"></td>
+        <tbody th:object="${check}">
+        <tr>
+            <td th:text="*{getId}"></td>
+            <td th:text="*{getStatusCode}"></td>
+            <td th:text="*{getTitle}"></td>
+            <td th:text="*{getH1}"></td>
+            <td th:text="*{getDescription}"></td>
+            <td th:text="*{getCreatedAt}"></td>
         </tr>
-        </tbody>
     </table>
-    <div class="alert alert-success" role="alert" th:if="${session.flash}">
-        <p class="m-0" th:text="${ctx.consumeSessionAttribute('flash')}"></p>
-    </div>
 
 </section>

@@ -15,7 +15,7 @@ public final class MigrationGenerator {
         String env = System.getenv("APP_ENV");
         if (Objects.equals(env, "production")) {
             dbMigration.addPlatform(Platform.POSTGRES, "postgres");
-        } else  {
+        } else {
             dbMigration.addPlatform(Platform.H2, "h2");
         }
         // Генерируем миграцию

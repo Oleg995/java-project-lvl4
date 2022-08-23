@@ -5,7 +5,9 @@ import io.ebean.annotation.WhenCreated;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 public class Url extends Model {
@@ -14,6 +16,8 @@ public class Url extends Model {
     private String name;
     @WhenCreated
     private LocalDateTime createdAt;
+    @OneToMany
+    private List<UrlCheck> urlChecks;
 
     public Url(String name) {
         this.name = name;
@@ -23,11 +27,30 @@ public class Url extends Model {
         return this.id;
     }
 
-    public final String getName() {
+    public final String getName() throws NullPointerException {
         return this.name;
     }
 
     public final LocalDateTime getCreatedAt() {
         return this.createdAt;
+    }
+
+    public final List<UrlCheck> getUrlChecks() {
+        return this.urlChecks;
+    }
+
+
+    public final LocalDateTime getLastCheck() {
+        if (!urlChecks.isEmpty()) {
+            return urlChecks.get(0).getCreatedAt();
+        }
+        return null;
+    }
+
+    public final Integer getLastStatusCode() {
+        if (!this.getUrlChecks().isEmpty()) {
+            return this.getUrlChecks().get(0).getStatusCode();
+        }
+        return null;
     }
 }

@@ -1,10 +1,15 @@
 package hexlet.code.controllers;
 
-import hexlet.code.model.ParserUrl;
+import hexlet.code.parser.ParserUrl;
 import hexlet.code.model.Url;
+import hexlet.code.model.UrlCheck;
 import hexlet.code.model.query.QUrl;
 import io.ebean.PagedList;
 import io.javalin.http.Handler;
+import kong.unirest.HttpResponse;
+import kong.unirest.Unirest;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import java.net.MalformedURLException;
 import java.util.List;
@@ -56,4 +61,38 @@ public final class Controller {
         ctx.attribute("url", url);
         ctx.render("urls/show.html");
     };
+
+    public static Handler createCheck = ctx -> {
+        long id = ctx.pathParamAsClass("id", Long.class).getOrDefault(null);
+        Url url = new QUrl().id
+                .equalTo(id)
+                .findOne();
+        assert url != null;
+
+        HttpResponse<String> response = Unirest.get(url.getName()).asString();
+        Document document = Jsoup.parse(response.getBody());
+        UrlCheck check = new UrlCheck();
+        check.setStatusCode(response.getStatus());
+        check.setUrl(url);
+        try {
+            check.setTitle(document.title());
+        } catch (NullPointerException e) {
+            check.setTitle("отсутствует");
+        }
+        try {
+            check.setH1(document.selectFirst("h1").text());
+        } catch (NullPointerException e) {
+            check.setH1("отсутствует");
+        }
+        try {
+            check.setDescription(document.selectFirst("meta[name=description]").attr("content"));
+        } catch (NullPointerException e) {
+            check.setDescription("отсутствует");
+        }
+//            UrlCheck check = new UrlCheck(response.getStatus(), title, h1, description, url);
+        check.save();
+        ctx.sessionAttribute("flash", "проверка создана");
+        ctx.redirect("/urls/" + id);
+    };
 }
+

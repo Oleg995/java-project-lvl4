@@ -27,6 +27,7 @@ public class App {
         app.post("/urls", Controller.addToBase);
         app.get("/urls", Controller.listUrls);
         app.get("/urls/{id}", Controller.showUrl);
+        app.post("/urls/{id}/checks", Controller.createCheck);
     }
 
     private static TemplateEngine getTemplateEngine() {

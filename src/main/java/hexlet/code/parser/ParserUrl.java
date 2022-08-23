@@ -1,4 +1,4 @@
-package hexlet.code.model;
+package hexlet.code.parser;
 
 import java.net.MalformedURLException;
 import java.net.URL;
