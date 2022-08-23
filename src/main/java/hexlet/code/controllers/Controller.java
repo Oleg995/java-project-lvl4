@@ -94,7 +94,7 @@ public final class Controller {
             ctx.redirect("/urls/" + id);
 
         } catch (Exception e) {
-            ctx.sessionAttribute("flash", "проверка не удалась, скорее всего ваш сайт уебанский");
+            ctx.sessionAttribute("flash", "проверка не удалась, что то не так с сайтом =(");
             UrlCheck check = new UrlCheck();
             check.setStatusCode(404);
             check.setUrl(url);
