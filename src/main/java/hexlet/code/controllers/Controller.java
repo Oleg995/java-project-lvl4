@@ -67,33 +67,40 @@ public final class Controller {
         Url url = new QUrl().id
                 .equalTo(id)
                 .findOne();
-        assert url != null;
+        try {
+            HttpResponse<String> response = Unirest.get(url.getName()).asString();
+            Document document = Jsoup.parse(response.getBody());
+            UrlCheck check = new UrlCheck();
+            check.setStatusCode(response.getStatus());
+            check.setUrl(url);
+            try {
+                check.setTitle(document.title());
+            } catch (NullPointerException e) {
+                check.setTitle("отсутствует");
+            }
+            try {
+                check.setH1(document.selectFirst("h1").text());
+            } catch (NullPointerException e) {
+                check.setH1("отсутствует");
+            }
+            try {
+                check.setDescription(document.selectFirst("meta[name=description]").attr("content"));
+            } catch (NullPointerException e) {
+                check.setDescription("отсутствует");
+            }
+            check.save();
+            url.addCheck(check);
+            ctx.sessionAttribute("flash", "проверка создана");
+            ctx.redirect("/urls/" + id);
 
-        HttpResponse<String> response = Unirest.get(url.getName()).asString();
-        Document document = Jsoup.parse(response.getBody());
-        UrlCheck check = new UrlCheck();
-        check.setStatusCode(response.getStatus());
-        check.setUrl(url);
-        try {
-            check.setTitle(document.title());
-        } catch (NullPointerException e) {
-            check.setTitle("отсутствует");
+        } catch (Exception e) {
+            ctx.sessionAttribute("flash", "проверка не удалась, скорее всего ваш сайт уебанский");
+            UrlCheck check = new UrlCheck();
+            check.setStatusCode(404);
+            check.setUrl(url);
+            check.save();
+            ctx.redirect("/urls/" + id);
         }
-        try {
-            check.setH1(document.selectFirst("h1").text());
-        } catch (NullPointerException e) {
-            check.setH1("отсутствует");
-        }
-        try {
-            check.setDescription(document.selectFirst("meta[name=description]").attr("content"));
-        } catch (NullPointerException e) {
-            check.setDescription("отсутствует");
-        }
-//            UrlCheck check = new UrlCheck(response.getStatus(), title, h1, description, url);
-        check.save();
-        url.addCheck(check);
-        ctx.sessionAttribute("flash", "проверка создана");
-        ctx.redirect("/urls/" + id);
     };
 }
 
