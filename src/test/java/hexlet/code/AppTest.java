@@ -144,4 +144,26 @@ public final class AppTest {
         assert check != null;
         assertThat(check.getH1()).contains("Free Online HTML");
     }
+
+//    @Test
+//    void testTest() throws IOException, InterruptedException {
+//        MockWebServer server = new MockWebServer();
+//
+//        // Schedule some responses.
+//        server.enqueue(new MockResponse().setBody("hello, world!"));
+//        server.enqueue(new MockResponse().setBody("страница успешно добавлена"));
+//        server.enqueue(new MockResponse().setBody("yo dog"));
+//        server.start();
+//        // Start the server.
+//
+//        // Ask the server for its URL. You'll need this to make HTTP requests.
+//        HttpUrl baseUrl = server.url("/urls");
+//        HttpResponse<String> response = Unirest.get(String.valueOf(baseUrl)).asString();
+//        assertThat(response.getBody()).isEqualTo("hello, world!");
+//
+//        RecordedRequest request1 = server.takeRequest();
+//        Assertions.assertEquals("/urls", request1.getPath());
+//
+//        server.shutdown();
+//    }
 }
