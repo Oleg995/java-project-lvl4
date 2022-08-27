@@ -2,20 +2,14 @@
 package hexlet.code;
 
 import hexlet.code.model.Url;
-import hexlet.code.model.UrlCheck;
 import hexlet.code.model.query.QUrl;
-import hexlet.code.model.query.QUrlCheck;
 import hexlet.code.parser.ParserUrl;
 import io.ebean.DB;
 import io.ebean.Transaction;
 import io.javalin.Javalin;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -26,6 +20,7 @@ public final class AppTest {
     private static String baseUrl;
     private static Javalin app;
     private static Transaction transaction;
+    private static Url existingUrl;
 
     @BeforeAll
     public static void beforeAll() {
@@ -33,6 +28,8 @@ public final class AppTest {
         app.start(0);
         int port = app.port();
         baseUrl = "http://localhost:" + port;
+        existingUrl = new Url("https://github.com");
+        existingUrl.save();
     }
 
     @AfterAll
@@ -68,81 +65,69 @@ public final class AppTest {
         assertThat(response.getStatus()).isEqualTo(200);
     }
 
-    @Test
-    void addUrlTest() {
-        String name = "https://leetcode.com";
-        HttpResponse<String> httpResponse = Unirest
-                .post(baseUrl + "/urls")
-                .field("name", name)
-                .asEmpty();
-        assertThat(httpResponse.getStatus()).isEqualTo(302);
+    @Nested
+    class UrlTest {
+        @Test
+        void addUrlTest() {
+            String name = "https://codebattle.hexlet.io";
+            HttpResponse<String> responsePost = Unirest
+                    .post(baseUrl + "/urls")
+                    .field("input", name)
+                    .asEmpty();
+            assertThat(responsePost.getStatus()).isEqualTo(302);
+            assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/urls");
 
-        Url url = new Url("https://leetcode.com");
-        url.save();
-        Url actualUrl = new QUrl()
-                .name.equalTo(name)
-                .findOne();
-        assertThat(actualUrl).isNotNull();
-        assertThat(actualUrl.getName()).isEqualTo(name);
-    }
+            Url actualUrl = new QUrl()
+                    .name.equalTo(name)
+                    .findOne();
+            assertThat(actualUrl).isNotNull();
+            assertThat(actualUrl.getName()).isEqualTo(name);
 
-    @Test
-    void showUrlTest() {
-        HttpResponse<String> httpResponse = Unirest
-                .get(baseUrl + "/urls/1")
-                .asString();
-        assertThat(httpResponse.getStatus()).isEqualTo(200);
-        assertThat(httpResponse.getBody()).contains("htmled.it");
+            HttpResponse<String> responseGet = Unirest
+                    .get(baseUrl + "/urls")
+                    .asString();
+            String body = responseGet.getBody();
+            assertThat(body).contains("страница успешно добавлена");
+        }
 
-    }
+        @Test
+        void showUrlTest() {
+            HttpResponse<String> actualHttpResponse = Unirest
+                    .get(baseUrl + "/urls/" + existingUrl.getId())
+                    .asString();
+            String body = actualHttpResponse.getBody();
+            assertThat(actualHttpResponse.getStatus()).isEqualTo(200);
+            assertThat(body).contains(existingUrl.getName());
 
-    @Test
-    void showListUrlTest() {
-        HttpResponse<String> httpResponse = Unirest
-                .get(baseUrl + "/urls")
-                .asString();
-        assertThat(httpResponse.getStatus()).isEqualTo(200);
-        assertThat(httpResponse.getBody()).contains("htmled.it");
-        assertThat(httpResponse.getBody()).contains("https://getbootstrap.com");
-    }
+        }
 
-    @Test
-    void createCheckTest() throws IOException {
-        String name = "https://htmled.it";
-        HttpResponse<String> httpResponse = Unirest
-                .post(baseUrl + "/urls/1/checks")
-                .field("name", name)
-                .asEmpty();
-        assertThat(httpResponse.getStatus()).isEqualTo(302);
-        Url actualUrl = new QUrl()
-                .name.equalTo(name)
-                .findOne();
-        assertThat(actualUrl).isNotNull();
-        assertThat(actualUrl.getName()).isEqualTo(name);
-        assertThat(actualUrl.getLastCheck()).isNotNull();
-        assertThat(actualUrl.getLastStatusCode()).isEqualTo(200);
+        @Test
+        void showListUrlTest() {
+            HttpResponse<String> httpResponse = Unirest
+                    .get(baseUrl + "/urls")
+                    .asString();
+            assertThat(httpResponse.getStatus()).isEqualTo(200);
+            assertThat(httpResponse.getBody()).contains(existingUrl.getName());
+        }
 
-    }
+        @Test
+        void createCheckTest() throws IOException {
 
-    @Test
-    void urlCheckTest() {
-        String name = "https://htmled.it";
-        HttpResponse<String> httpResponse = Unirest
-                .post(baseUrl + "/urls/1/checks")
-                .field("name", name)
-                .asEmpty();
-        Url url = new QUrl()
-                .name.equalTo(name)
-                .findOne();
-        assertThat(httpResponse.getStatus()).isEqualTo(302);
-        assertThat(url).isNotNull();
-        assertThat(url.getName()).contains("https://htmled.it");
+            HttpResponse<String> responsePost = Unirest
+                    .post(baseUrl + "/urls/" + existingUrl.getId() + "/checks")
+                    .asEmpty();
+            assertThat(responsePost.getStatus()).isEqualTo(302);
+            assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/urls/1");
 
-        UrlCheck check = new QUrlCheck()
-                .id.equalTo(url.getId())
-                .findOne();
-        assert check != null;
-        assertThat(check.getH1()).contains("Free Online HTML");
+            HttpResponse <String> responseGet = Unirest
+                    .get(baseUrl + "/urls/1")
+                    .asString();
+            assertThat(responseGet.getStatus()).isEqualTo(200);
+            assertThat(responseGet.getBody()).contains("проверка создана");
+            assertThat(responseGet.getBody()).contains("title");
+
+
+        }
     }
 
 //    @Test

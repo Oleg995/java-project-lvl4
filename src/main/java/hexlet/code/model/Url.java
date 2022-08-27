@@ -13,7 +13,7 @@ import java.util.List;
 public class Url extends Model {
     @Id
     private long id;
-    private String name;
+    private final String name;
     @WhenCreated
     private LocalDateTime createdAt;
     @OneToMany

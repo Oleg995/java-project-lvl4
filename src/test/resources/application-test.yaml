@@ -1,3 +1,4 @@
+
 ebean:
   test:
     useDocker: false
@@ -7,4 +8,4 @@ ebean:
   ddl:
     run: true
     generate: true
-    seedSql: seed-test-db.sql
+    seedSql: seed.sql
