@@ -9,9 +9,13 @@ import io.ebean.Transaction;
 import io.javalin.Javalin;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -111,15 +115,14 @@ public final class AppTest {
         }
 
         @Test
-        void createCheckTest() throws IOException {
-
+        void createCheckTest() {
             HttpResponse<String> responsePost = Unirest
                     .post(baseUrl + "/urls/" + existingUrl.getId() + "/checks")
                     .asEmpty();
             assertThat(responsePost.getStatus()).isEqualTo(302);
             assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/urls/1");
 
-            HttpResponse <String> responseGet = Unirest
+            HttpResponse<String> responseGet = Unirest
                     .get(baseUrl + "/urls/1")
                     .asString();
             assertThat(responseGet.getStatus()).isEqualTo(200);

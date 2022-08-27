@@ -6,13 +6,12 @@ package hexlet.code;
 import hexlet.code.controllers.Controller;
 import hexlet.code.controllers.RootController;
 import io.javalin.Javalin;
+import io.javalin.apibuilder.ApiBuilder;
 import io.javalin.plugin.rendering.template.JavalinThymeleaf;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
-
-import static io.javalin.apibuilder.ApiBuilder.*;
 
 public class App {
 
@@ -27,11 +26,11 @@ public class App {
         // обработчик welcome в контроллере RootController
         app.get("/", RootController.welcome);
         app.routes(() -> {
-            path("urls", () -> {
-                get(Controller.listUrls);
-                post(Controller.addToBase);
-                get("{id}", Controller.showUrl);
-                post("{id}/checks", Controller.createCheck);
+            ApiBuilder.path("urls", () -> {
+                ApiBuilder.get(Controller.listUrls);
+                ApiBuilder.post(Controller.addToBase);
+                ApiBuilder.get("{id}", Controller.showUrl);
+                ApiBuilder.post("{id}/checks", Controller.createCheck);
             });
         });
     }
