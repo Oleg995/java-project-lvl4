@@ -107,7 +107,7 @@ public final class AppTest {
                     .asString();
 
             assertThat(responseGet.getStatus()).isEqualTo(200);
-            assertThat(responseGet.getBody()).contains("страница успешно добавлена");
+            assertThat(responseGet.getBody()).contains("Страница успешно добавлена");
 
             HttpResponse<String> responseCheck = Unirest
                     .post(baseUrl + "/urls/" + actualUrl.getString("id") + "/checks")

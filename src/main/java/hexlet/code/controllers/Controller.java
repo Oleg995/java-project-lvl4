@@ -30,7 +30,7 @@ public final class Controller {
                 ctx.redirect("/urls");
             } else {
                 url.save();
-                ctx.sessionAttribute("flashSuccess", "страница успешно добавлена");
+                ctx.sessionAttribute("flashSuccess", "Страница успешно добавлена");
                 ctx.redirect("/urls");
             }
         } catch (MalformedURLException e) {
