@@ -123,3 +123,15 @@ create table url (
 2022-08-22 22:48:14 jdbc[4]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "URL_CHECK" not found; SQL statement:
 alter table url_check drop constraint if exists fk_url_check_url_id [42102-210]
+2022-08-29 17:37:00 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLDataException: Value too long for column "DESCRIPTION CHARACTER VARYING(255)": "'GitHub is where over 83 million developers shape the future of software, togeth... (279)"; SQL statement:
+insert into url_check (status_code, title, h1, description, created_at, url_id) values (?,?,?,?,?,?) [22001-210]
+2022-08-29 17:37:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLDataException: Value too long for column "DESCRIPTION CHARACTER VARYING(255)": "'GitHub is where over 83 million developers shape the future of software, togeth... (279)"; SQL statement:
+insert into url_check (status_code, title, h1, description, created_at, url_id) values (?,?,?,?,?,?) [22001-210]
+2022-08-29 17:38:42 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLDataException: Value too long for column "DESCRIPTION CHARACTER VARYING(255)": "'GitHub is where over 83 million developers shape the future of software, togeth... (279)"; SQL statement:
+insert into url_check (status_code, title, h1, description, created_at, url_id) values (?,?,?,?,?,?) [22001-210]
+2022-08-29 17:40:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLDataException: Value too long for column "DESCRIPTION CHARACTER VARYING(255)": "'GitHub is where over 83 million developers shape the future of software, togeth... (279)"; SQL statement:
+insert into url_check (status_code, title, h1, description, created_at, url_id) values (?,?,?,?,?,?) [22001-210]

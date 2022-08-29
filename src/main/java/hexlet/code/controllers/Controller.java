@@ -1,22 +1,27 @@
 package hexlet.code.controllers;
 
-import hexlet.code.parser.ParserUrl;
 import hexlet.code.model.Url;
 import hexlet.code.model.UrlCheck;
 import hexlet.code.model.query.QUrl;
+import hexlet.code.parser.ParserUrl;
 import io.ebean.PagedList;
 import io.javalin.http.Handler;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.util.List;
 
 public final class Controller {
+    private static Logger logger = LoggerFactory.getLogger(Controller.class);
     public static Handler addToBase = ctx -> {
-        String input = ctx.formParam("input");
+        String input = ctx.formParam("url");
+//        Validator<String> urlValidator = ctx.formParamAsClass("firstName", String.class)
+//                .check(str -> !str.isEmpty(), "line not is null");
         try {
             Url url = new Url(ParserUrl.parse(input));
             boolean existUrl = new QUrl().name.equalTo(url.getName()).exists();
@@ -90,10 +95,11 @@ public final class Controller {
             }
             check.save();
             url.addCheck(check);
-            ctx.sessionAttribute("flash", "проверка создана");
+            ctx.sessionAttribute("flash", "Страница успешно проверена");
             ctx.redirect("/urls/" + id);
 
         } catch (Exception e) {
+            logger.error("error", e);
             ctx.sessionAttribute("flash", "проверка не удалась, что то не так с сайтом =(");
             UrlCheck check = new UrlCheck();
             check.setStatusCode(404);
