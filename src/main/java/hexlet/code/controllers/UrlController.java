@@ -6,6 +6,7 @@ import hexlet.code.model.query.QUrl;
 import hexlet.code.parser.ParserUrl;
 import io.ebean.PagedList;
 import io.javalin.http.Handler;
+import io.javalin.http.NotFoundResponse;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import org.jsoup.Jsoup;
@@ -16,9 +17,9 @@ import org.slf4j.LoggerFactory;
 import java.net.MalformedURLException;
 import java.util.List;
 
-public final class Controller {
-    private static Logger logger = LoggerFactory.getLogger(Controller.class);
-    public static Handler addToBase = ctx -> {
+public final class UrlController {
+    private static Logger logger = LoggerFactory.getLogger(UrlController.class);
+    public static Handler createUrl = ctx -> {
         String input = ctx.formParam("url");
 //        Validator<String> urlValidator = ctx.formParamAsClass("firstName", String.class)
 //                .check(str -> !str.isEmpty(), "line not is null");
@@ -63,36 +64,32 @@ public final class Controller {
         Url url = new QUrl()
                 .id.equalTo(id)
                 .findOne();
+
+        if (url == null) {
+            throw new NotFoundResponse();
+        }
         ctx.attribute("url", url);
         ctx.render("urls/show.html");
     };
 
-    public static Handler createCheck = ctx -> {
+    public static Handler checkUrl = ctx -> {
         long id = ctx.pathParamAsClass("id", Long.class).getOrDefault(null);
         Url url = new QUrl().id
                 .equalTo(id)
                 .findOne();
+        if (url == null) {
+            throw new NotFoundResponse();
+        }
         try {
             HttpResponse<String> response = Unirest.get(url.getName()).asString();
             Document document = Jsoup.parse(response.getBody());
-            UrlCheck check = new UrlCheck();
-            check.setStatusCode(response.getStatus());
-            check.setUrl(url);
-            try {
-                check.setTitle(document.title());
-            } catch (NullPointerException e) {
-                check.setTitle("отсутствует");
-            }
-            try {
-                check.setH1(document.selectFirst("h1").text());
-            } catch (NullPointerException e) {
-                check.setH1("отсутствует");
-            }
-            try {
-                check.setDescription(document.selectFirst("meta[name=description]").attr("content"));
-            } catch (NullPointerException e) {
-                check.setDescription("отсутствует");
-            }
+            String title = (document.title() != null ? document.title() : "отсутствует");
+            String h1 = (document.selectFirst("h1").text() != null ? document.selectFirst("h1")
+                    .text() : "отсутствует");
+            String description = (document.selectFirst("meta[name=description]").attr("content")
+                    != null ? document.selectFirst("meta[name=description]").attr("content")
+                    : "отсутствует");
+            UrlCheck check = new UrlCheck(response.getStatus(), title, h1, description, url);
             check.save();
             url.addCheck(check);
             ctx.sessionAttribute("flash", "Страница успешно проверена");
@@ -101,10 +98,6 @@ public final class Controller {
         } catch (Exception e) {
             logger.error("error", e);
             ctx.sessionAttribute("flash", "проверка не удалась, что то не так с сайтом =(");
-            UrlCheck check = new UrlCheck();
-            check.setStatusCode(404);
-            check.setUrl(url);
-            check.save();
             ctx.redirect("/urls/" + id);
         }
     };

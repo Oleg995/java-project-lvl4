@@ -3,7 +3,7 @@
  */
 package hexlet.code;
 
-import hexlet.code.controllers.Controller;
+import hexlet.code.controllers.UrlController;
 import hexlet.code.controllers.RootController;
 import io.javalin.Javalin;
 import io.javalin.apibuilder.ApiBuilder;
@@ -15,6 +15,12 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 public class App {
 
+    private static String getMode() {
+        return System.getenv().getOrDefault("APP_ENV", "development");
+    }
+    private static boolean isProduction() {
+        return getMode().equals("production");
+    }
 
     private static int getPort() {
         String port = System.getenv().getOrDefault("PORT", "8000");
@@ -27,10 +33,10 @@ public class App {
         app.get("/", RootController.welcome);
         app.routes(() -> {
             ApiBuilder.path("urls", () -> {
-                ApiBuilder.get(Controller.listUrls);
-                ApiBuilder.post(Controller.addToBase);
-                ApiBuilder.get("{id}", Controller.showUrl);
-                ApiBuilder.post("{id}/checks", Controller.createCheck);
+                ApiBuilder.get(UrlController.listUrls);
+                ApiBuilder.post(UrlController.createUrl);
+                ApiBuilder.get("{id}", UrlController.showUrl);
+                ApiBuilder.post("{id}/checks", UrlController.checkUrl);
             });
         });
     }
@@ -55,16 +61,14 @@ public class App {
         // Создаём приложение
         Javalin app = Javalin.create(config -> {
             // Включаем логгирование
-            config.enableDevLogging();
+            if (!isProduction()) {
+                config.enableDevLogging();
+            }
+            config.enableWebjars();
             // Подключаем настроенный шаблонизатор к фреймворку
             JavalinThymeleaf.configure(getTemplateEngine());
         });
-
-        // Добавляем маршруты в приложение
         addRoutes(app);
-
-        // Обработчик before запускается перед каждым запросом
-        // Устанавливаем атрибут ctx для запросов
         app.before(ctx -> {
             ctx.attribute("ctx", ctx);
         });

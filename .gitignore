@@ -1,4 +1,8 @@
 
 .gradle
 .github
+.idea
 build
+database.mv.db
+database.trace.db
+

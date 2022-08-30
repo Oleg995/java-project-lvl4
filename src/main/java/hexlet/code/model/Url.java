@@ -27,7 +27,7 @@ public class Url extends Model {
         return this.id;
     }
 
-    public final String getName() throws NullPointerException {
+    public final String getName()  {
         return this.name;
     }
 
