@@ -22,6 +22,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.stream.Collectors;
@@ -32,7 +34,6 @@ public final class AppTest {
     private static String baseUrl;
     private static Javalin app;
     private static Transaction transaction;
-    private static Url existingUrl;
     private static MockWebServer mockServer;
 
     @BeforeAll
@@ -42,13 +43,12 @@ public final class AppTest {
         int port = app.port();
         baseUrl = "http://localhost:" + port;
 
-        existingUrl = new Url("https://github.com");
+        Url existingUrl = new Url("https://github.com");
         existingUrl.save();
         mockServer = new MockWebServer();
         mockServer.start();
-        mockServer.enqueue(new MockResponse().setBody("<!DOCTYPE html><html><head>"
-                + "<meta name=\"description\" content=\"Free Web tutorials\"><title>Test page</title>"
-                + "</head><body><h1>Do not expect a miracle, miracles yourself!</h1></body></html>"));
+        String content = Files.readString(Paths.get("src/test/resources/responseTest.html"));
+        mockServer.enqueue(new MockResponse().setBody(content));
     }
 
     @AfterAll
@@ -103,7 +103,7 @@ public final class AppTest {
             assertThat(actualUrl.getString("name")).isEqualTo(url);
 
             HttpResponse<String> responseGet = Unirest
-                    .get(baseUrl  + "/urls")
+                    .get(baseUrl + "/urls")
                     .asString();
 
             assertThat(responseGet.getStatus()).isEqualTo(200);

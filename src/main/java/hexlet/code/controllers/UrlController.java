@@ -11,19 +11,23 @@ import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.util.List;
+import java.util.Objects;
 
 public final class UrlController {
-    private static Logger logger = LoggerFactory.getLogger(UrlController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UrlController.class);
     public static Handler createUrl = ctx -> {
         String input = ctx.formParam("url");
-//        Validator<String> urlValidator = ctx.formParamAsClass("firstName", String.class)
-//                .check(str -> !str.isEmpty(), "line not is null");
         try {
+            if (Objects.equals(input, null) || Objects.equals(input, "")) {
+                ctx.sessionAttribute("flashEmpty", "Url не может быть пустым");
+                ctx.redirect("/");
+            }
             Url url = new Url(ParserUrl.parse(input));
             boolean existUrl = new QUrl().name.equalTo(url.getName()).exists();
             if (existUrl) {
@@ -83,11 +87,13 @@ public final class UrlController {
         try {
             HttpResponse<String> response = Unirest.get(url.getName()).asString();
             Document document = Jsoup.parse(response.getBody());
-            String title = (document.title() != null ? document.title() : "отсутствует");
-            String h1 = (document.selectFirst("h1").text() != null ? document.selectFirst("h1")
-                    .text() : "отсутствует");
-            String description = (document.selectFirst("meta[name=description]").attr("content")
-                    != null ? document.selectFirst("meta[name=description]").attr("content")
+            String title = (document.title().isEmpty() ? "отсутствует" : document.title());
+            Element h1Element = document.selectFirst("h1");
+            String h1 = h1Element != null && h1Element.hasText() ? h1Element.text() : "отсутствует";
+            Element descriptionElement = document.selectFirst("meta[name=description]");
+            String descriptionContent = descriptionElement != null ? descriptionElement
+                    .attr("content") : "";
+            String description = (!descriptionContent.isEmpty() ? descriptionContent
                     : "отсутствует");
             UrlCheck check = new UrlCheck(response.getStatus(), title, h1, description, url);
             check.save();
@@ -96,7 +102,7 @@ public final class UrlController {
             ctx.redirect("/urls/" + id);
 
         } catch (Exception e) {
-            logger.error("error", e);
+            LOGGER.error("error", e);
             ctx.sessionAttribute("flash", "проверка не удалась, что то не так с сайтом =(");
             ctx.redirect("/urls/" + id);
         }
